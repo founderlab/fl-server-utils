@@ -59,7 +59,7 @@ export function directoryFunctionModules(directory) {
 
 // Implement ajax requests with superagent so that models using backbone-http can get their data when
 // rendering on the server
-export default function basicAjax(config) {
+export function createBasicAjax(config) {
   return function basicAjax(options) {
     if (options.url.match(/^\//)) options.url = config.url + options.url
 
