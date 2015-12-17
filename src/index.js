@@ -9,7 +9,7 @@ export function removeDirectoryAndExtension(file, directory) {
   return filename.replace(path.extname(filename), '')
 }
 
-export function filesInDir(directory) {
+export function directoryFiles(directory) {
   const results = []
 
   function processDirectory(directory) {
@@ -34,7 +34,7 @@ export function filesInDir(directory) {
   return results
 }
 
-export function modulesInDir(directory) {
+export function directoryModules(directory) {
   const results = {}
   files(directory).forEach(file => {
     try {
@@ -47,7 +47,7 @@ export function modulesInDir(directory) {
   return results
 }
 
-export function functionModulesInDir(directory) {
+export function directoryFunctionModules(directory) {
   const results = modules(directory)
   _.keys(results).forEach(file => {
     if (!_.isFunction(results[file])) delete results[file]
