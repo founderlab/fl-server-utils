@@ -37,7 +37,7 @@ export function directoryFiles(directory) {
 
 export function directoryModules(directory) {
   const results = {}
-  files(directory).forEach(file => {
+  directoryFiles(directory).forEach(file => {
     try {
       results[removeDirectoryAndExtension(file, directory)] = require(file)
     }
@@ -50,7 +50,7 @@ export function directoryModules(directory) {
 
 // Find all modules in a directory that have a class or function as their default export
 export function directoryFunctionModules(directory) {
-  const results = modules(directory)
+  const results = directoryModules(directory)
   _.keys(results).forEach(file => {
     if (!_.isFunction(results[file])) delete results[file]
   })
