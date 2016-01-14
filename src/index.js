@@ -50,11 +50,13 @@ export function directoryModules(directory) {
 
 // Find all modules in a directory that have a class or function as their default export
 export function directoryFunctionModules(directory) {
-  const results = directoryModules(directory)
-  _.keys(results).forEach(file => {
-    if (!_.isFunction(results[file])) delete results[file]
+  const all_modules = directoryModules(directory)
+  const function_modules = {}
+  _.keys(all_modules).forEach(file => {
+    const module = all_modules[file].default ? all_modules[file].default : all_modules[file]
+    if (_.isFunction(module)) function_modules[file] = module
   })
-  return results
+  return function_modules
 }
 
 // Implement ajax requests with superagent so that models using backbone-http can get their data when
