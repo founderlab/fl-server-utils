@@ -14,6 +14,6 @@ export default function render(req, json, callback) {
 
   if (template.$raw) return template(json, options, callback)
 
-  models = _.isArray(json) ? _.map(json, (model_json) => new this.model_type(this.model_type::parse(model_json))) : new this.model_type(this.model_type::parse(json))
+  const models = _.isArray(json) ? _.map(json, (model_json) => new this.model_type(this.model_type.prototype.parse(model_json))) : new this.model_type(this.model_type.prototype.parse(json))
   JSONUtils.renderTemplate(models, template, options, callback)
 }
