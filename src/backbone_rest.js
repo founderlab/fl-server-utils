@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import {JSONUtils} from 'backbone-orm'
 
 export default function render(req, json, callback) {
