@@ -2,6 +2,7 @@ import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
 import request from 'superagent'
+export render from './backbone_rest'
 
 const EXCLUDED_FILES = ['.DS_Store']
 
