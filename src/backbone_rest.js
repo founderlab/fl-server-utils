@@ -5,7 +5,7 @@ function stripRev(obj) {
   const final_obj = {}
   _.forEach(obj, (value, key) => {
     if (key !== '_rev') {
-      final_obj[key] = _.isObject(value) ? stripRev(value) : value
+      final_obj[key] = _.isObject(value) && !(value instanceof Date) ? stripRev(value) : value
     }
   })
   return final_obj
