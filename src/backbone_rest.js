@@ -2,13 +2,15 @@ import _ from 'lodash'
 import {JSONUtils} from 'backbone-orm'
 
 function stripRev(obj) {
-  const final_obj = {}
-  _.forEach(obj, (value, key) => {
-    if (key !== '_rev') {
-      final_obj[key] = _.isObject(value) && !(value instanceof Date) ? stripRev(value) : value
-    }
-  })
-  return final_obj
+  if (_.isArray(obj)) return _.map(obj, o => stripRev(o))
+  if (_.isObject(obj) && !(obj instanceof Date)) {
+    const final_obj = {}
+    _.forEach(obj, (value, key) => {
+      if (key !== '_rev') final_obj[key] = stripRev(value)
+    })
+    return final_obj
+  }
+  return obj
 }
 
 export default function render(req, json, callback) {
