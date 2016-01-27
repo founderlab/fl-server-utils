@@ -7,9 +7,9 @@ import createHistory from 'history/lib/createMemoryHistory'
 import {Provider} from 'react-redux'
 import {ReduxRouter} from 'redux-router'
 import {reduxReactRouter, match} from 'redux-router/server'
+import {fetchComponentData} from 'fl-react-utils'
 
 import {jsAssets, cssAssets} from './assets'
-import fetchComponentData from './fetchComponentData'
 
 const sendError = (res, err) => {
   console.log(err)
