@@ -80,3 +80,11 @@ export function createBasicAjax(config) {
     })
   }
 }
+
+export function smartSync(db_url, Model) {
+  const backend = db_url.split(':')[0]
+  if (backend === 'mongodb') {
+    return require('backbone-mongo').sync(Model)
+  }
+  return require('backbone-sql').sync(Model)
+}
