@@ -77,7 +77,7 @@ export default function createServerRenderer(_options) {
 
           const css = cssAssets(options.entries, options.webpack_assets_path)
           const css_tags = css.map(c => `<link rel="stylesheet" type="text/css" href="${c}">`).join('\n')
-console.log('js, css', js, css)
+
           const HTML = `
             <!DOCTYPE html>
             <html>
