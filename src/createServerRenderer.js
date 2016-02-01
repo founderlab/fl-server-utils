@@ -7,6 +7,7 @@ import createHistory from 'history/lib/createMemoryHistory'
 import {Provider} from 'react-redux'
 import {ReduxRouter} from 'redux-router'
 import {reduxReactRouter, match} from 'redux-router/server'
+import Helmet from 'react-helmet'
 import {fetchComponentData} from 'fl-react-utils'
 
 import {jsAssets, cssAssets} from './assets'
@@ -78,24 +79,31 @@ export default function createServerRenderer(_options) {
           const css = cssAssets(options.entries, options.webpack_assets_path)
           const css_tags = css.map(c => `<link rel="stylesheet" type="text/css" href="${c}">`).join('\n')
 
-          const HTML = `
+          const rendered = renderToString(component)
+          const head = Helmet.rewind()
+
+          const html = `
             <!DOCTYPE html>
             <html>
               <head>
-                <meta charset="utf-8">
-                <title>FounderLab_replaceme></title>
+                ${head.title}
+                ${head.base}
+                ${head.meta}
+                ${head.link}
+                ${head.script}
+
                 ${css_tags}
                 <script type="application/javascript">
                   window.__INITIAL_STATE__ = ${JSON.stringify(initial_state)}
                 </script>
               </head>
               <body id="app">
-                <div id="react-view">${renderToString(component)}</div>
+                <div id="react-view">${rendered}</div>
                 ${script_tags}
               </body>
             </html>
           `
-          res.type('html').send(HTML)
+          res.type('html').send(html)
 
         })
       }))
