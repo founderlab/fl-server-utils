@@ -2,10 +2,10 @@ import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
 import request from 'superagent'
-export render from './backbone_rest'
+import render from './backbone_rest'
 import createServerRenderer from './createServerRenderer'
 
-export {createServerRenderer}
+export {render, createServerRenderer}
 
 const EXCLUDED_FILES = ['.DS_Store']
 
@@ -75,7 +75,7 @@ export function createBasicAjax(config) {
     req.query({$auth_secret: config.secret})
 
     req.end((err, res) => {
-      if ((err || !res.ok) && options.error) options.error(res || err)
+      if ((err || !res.ok) && options.error) return options.error(res || err)
       options.success(res.body)
     })
   }
