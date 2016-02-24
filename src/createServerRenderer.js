@@ -39,12 +39,11 @@ export default function createServerRenderer(_options) {
     }
     if (options.loadInitialState) {
       queue.defer(callback => options.loadInitialState((err, state) => {
-        if (err) return sendError(res, err)
+        if (err) return callback(err)
         callback(null, _.merge(server_state, state))
       }))
     }
     queue.await(err => {
-      console.log('server_state', server_state)
       if (err) return sendError(res, err)
 
       const store = createStore(reduxReactRouter, getRoutes, createHistory, server_state)
