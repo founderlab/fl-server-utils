@@ -34,14 +34,22 @@ export default function createServerRenderer(_options) {
     const queue = new Queue(1)
 
     const server_state = {
-      config,
-      auth: req.user ? {user: _.omit(req.user.toJSON(), 'password')} : {},
+      auth: req.user ? {user: _.omit(req.user.toJSON(), 'password', '_rev')} : {},
     }
     if (options.loadInitialState) {
       queue.defer(callback => options.loadInitialState(req, (err, state) => {
         if (err) return callback(err)
         callback(null, _.merge(server_state, state))
       }))
+    }
+    if (_.isFunction(config)) {
+      queue.defer(callback => config(req, (err, _config) => {
+        if (err) return callback(err)
+        callback(null, server_state.config = _config)
+      }))
+    }
+    else {
+      server_state.config = config
     }
     queue.await(err => {
       if (err) return sendError(res, err)
