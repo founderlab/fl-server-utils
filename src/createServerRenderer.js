@@ -55,7 +55,7 @@ export default function createServerRenderer(_options) {
         if (!router_state) return res.status(404).send('Not found')
 
         const components = _.uniq((always_fetch || {}).concat(router_state.components))
-        fetchComponentData({store, components}, (err) => {
+        fetchComponentData({store, components}, err => {
           if (err) return sendError(res, err)
 
           let initial_state = store.getState()
