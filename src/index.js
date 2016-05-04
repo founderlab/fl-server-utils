@@ -67,7 +67,7 @@ export function directoryFunctionModules(directory) {
 // rendering on the server
 export function createBasicAjax(config) {
   return function basicAjax(options) {
-    if (options.url.match(/^\//)) options.url = config.url + options.url
+    if (options.url.match(/^\//)) options.url = (config.internal_url || 'http://localhost') + options.url
 
     const req = request(options.type, options.url)
     if (options.query) req.query(options.query)

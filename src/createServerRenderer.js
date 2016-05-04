@@ -34,17 +34,24 @@ export default function createServerRenderer(_options) {
     const queue = new Queue(1)
 
     const server_state = {
-      config,
-      auth: req.user ? {user: _.omit(req.user.toJSON(), 'password')} : {},
+      auth: req.user ? {user: _.omit(req.user.toJSON(), 'password', '_rev')} : {},
     }
     if (options.loadInitialState) {
-      queue.defer(callback => options.loadInitialState((err, state) => {
-        if (err) return sendError(res, err)
+      queue.defer(callback => options.loadInitialState(req, (err, state) => {
+        if (err) return callback(err)
         callback(null, _.merge(server_state, state))
       }))
     }
+    if (_.isFunction(config)) {
+      queue.defer(callback => config(req, (err, _config) => {
+        if (err) return callback(err)
+        callback(null, server_state.config = _config)
+      }))
+    }
+    else {
+      server_state.config = config
+    }
     queue.await(err => {
-      console.log('server_state', server_state)
       if (err) return sendError(res, err)
 
       const store = createStore(reduxReactRouter, getRoutes, createHistory, server_state)
@@ -55,8 +62,10 @@ export default function createServerRenderer(_options) {
         if (!router_state) return res.status(404).send('Not found')
 
         const components = _.uniq((always_fetch || {}).concat(router_state.components))
-        fetchComponentData({store, components}, err => {
+
+        fetchComponentData({store, components}, (err, fetch_result) => {
           if (err) return sendError(res, err)
+          if (fetch_result.status) res.status(fetch_result.status)
 
           let initial_state = store.getState()
 
