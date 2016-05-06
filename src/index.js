@@ -86,5 +86,5 @@ export function smartSync(db_url, Model) {
   if (backend === 'mongodb') {
     return require('backbone-mongo').sync(Model)
   }
-  return require('backbone-sql').sync(Model)
+  return require('fl-backbone-sql').sync(Model)
 }
