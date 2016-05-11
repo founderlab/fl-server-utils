@@ -19,7 +19,7 @@ const sendError = (res, err) => {
 
 const defaults = {
   entries: ['shared', 'app'],
-  webpack_assets_path: path.resolve(__dirname, '../../../webpack-assets.json'),
+  webpack_assetsPath: path.resolve(__dirname, '../../../webpack-assets.json'),
 }
 
 export default function createServerRenderer(_options) {
@@ -33,48 +33,48 @@ export default function createServerRenderer(_options) {
   return function app(req, res) {
     const queue = new Queue(1)
 
-    const server_state = {
+    const serverState = {
       auth: req.user ? {user: _.omit(req.user.toJSON(), 'password', '_rev')} : {},
     }
     if (options.loadInitialState) {
       queue.defer(callback => options.loadInitialState(req, (err, state) => {
         if (err) return callback(err)
-        callback(null, _.merge(server_state, state))
+        callback(null, _.merge(serverState, state))
       }))
     }
     if (_.isFunction(config)) {
       queue.defer(callback => config(req, (err, _config) => {
         if (err) return callback(err)
-        callback(null, server_state.config = _config)
+        callback(null, serverState.config = _config)
       }))
     }
     else {
-      server_state.config = config
+      serverState.config = config
     }
     queue.await(err => {
       if (err) return sendError(res, err)
 
-      const store = createStore(reduxReactRouter, getRoutes, createHistory, server_state)
+      const store = createStore(reduxReactRouter, getRoutes, createHistory, serverState)
 
-      store.dispatch(match(req.originalUrl, (err, redirect_location, router_state) => {
+      store.dispatch(match(req.originalUrl, (err, redirect_location, routerState) => {
         if (err) return sendError(res, err)
         if (redirect_location) return res.redirect(redirect_location.pathname + redirect_location.search)
-        if (!router_state) return res.status(404).send('Not found')
+        if (!routerState) return res.status(404).send('Not found')
 
-        const components = _.uniq((always_fetch || {}).concat(router_state.components))
+        const components = _.uniq((always_fetch || {}).concat(routerState.components))
 
         fetchComponentData({store, components}, (err, fetch_result) => {
           if (err) return sendError(res, err)
           if (fetch_result.status) res.status(fetch_result.status)
 
-          let initial_state = store.getState()
+          let initialState = store.getState()
 
           // temp solution to rendering admin state
           // todo: make this better. don't include admin reducers / route unless requested
-          if (options.omit) initial_state = _.omit(initial_state, options.omit)
+          if (options.omit) initialState = _.omit(initialState, options.omit)
 
           // https://github.com/rackt/redux-router/issues/106
-          router_state.location.query = req.query
+          routerState.location.query = req.query
 
           const component = (
             <Provider store={store} key="provider">
@@ -82,10 +82,10 @@ export default function createServerRenderer(_options) {
             </Provider>
           )
 
-          const js = jsAssets(options.entries, options.webpack_assets_path)
+          const js = jsAssets(options.entries, options.webpack_assetsPath)
           const script_tags = js.map(script => `<script type="application/javascript" src="${script}"></script>`).join('\n')
 
-          const css = cssAssets(options.entries, options.webpack_assets_path)
+          const css = cssAssets(options.entries, options.webpack_assetsPath)
           const css_tags = css.map(c => `<link rel="stylesheet" type="text/css" href="${c}">`).join('\n')
 
           const rendered = renderToString(component)
@@ -103,7 +103,7 @@ export default function createServerRenderer(_options) {
 
                 ${css_tags}
                 <script type="application/javascript">
-                  window.__INITIAL_STATE__ = ${JSON.stringify(initial_state)}
+                  window.__INITIAL_STATE__ = ${JSON.stringify(initialState)}
                 </script>
               </head>
               <body id="app">

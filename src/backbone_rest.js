@@ -14,23 +14,23 @@ function stripRev(obj) {
 }
 
 export default function render(req, json, callback) {
-  let template_name = req.query.$render || req.query.$template || this.default_template
-  if (!template_name) return callback(null, json)
-  try {template_name = JSON.parse(template_name)}
+  let templateName = req.query.$render || req.query.$template || this.default_template
+  if (!templateName) return callback(null, json)
+  try {templateName = JSON.parse(templateName)}
   catch (e) {} // eslint-disable-line
 
-  const template = this.templates[template_name]
-  if (!template) return callback(new Error(`Unrecognized template: ${template_name}`))
+  const template = this.templates[templateName]
+  if (!template) return callback(new Error(`Unrecognized template: ${templateName}`))
 
-  const options = this.renderOptions ? this.renderOptions(req, template_name) : {}
+  const options = this.renderOptions ? this.renderOptions(req, templateName) : {}
 
   if (template.$raw) {
-    return template(json, options, (err, rendered_json) => {
+    return template(json, options, (err, renderedJson) => {
       if (err) return callback(err)
-      callback(null, stripRev(rendered_json))
+      callback(null, stripRev(renderedJson))
     })
   }
 
-  const models = _.isArray(json) ? _.map(json, (model_json) => new this.model_type(this.model_type.prototype.parse(model_json))) : new this.model_type(this.model_type.prototype.parse(json))
+  const models = _.isArray(json) ? _.map(json, (modelJson) => new this.model_type(this.model_type.prototype.parse(modelJson))) : new this.model_type(this.model_type.prototype.parse(json))
   JSONUtils.renderTemplate(models, template, options, callback)
 }

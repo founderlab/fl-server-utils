@@ -67,7 +67,7 @@ export function directoryFunctionModules(directory) {
 // rendering on the server
 export function createBasicAjax(config) {
   return function basicAjax(options) {
-    if (options.url.match(/^\//)) options.url = (config.internal_url || 'http://localhost') + options.url
+    if (options.url.match(/^\//)) options.url = (config.internalUrl || 'http://localhost') + options.url
 
     const req = request(options.type, options.url)
     if (options.query) req.query(options.query)
@@ -81,8 +81,8 @@ export function createBasicAjax(config) {
   }
 }
 
-export function smartSync(db_url, Model) {
-  const backend = db_url.split(':')[0]
+export function smartSync(dbUrl, Model) {
+  const backend = dbUrl.split(':')[0]
   if (backend === 'mongodb') {
     return require('backbone-mongo').sync(Model)
   }

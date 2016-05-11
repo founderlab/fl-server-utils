@@ -39,7 +39,7 @@ app.get('*', createServerRenderer({
   scripts: _.map(_.pick(require('../../webpack-assets.json'), ['shared.js', 'app']), entry => entry.js),
   omit: 'admin',
   always_fetch: require('../../shared/modules/app/containers/App'),
-  config: _.pick(config, config.client_config_keys),
+  config: _.pick(config, config.client_configKeys),
 }))
 ```
 
