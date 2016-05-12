@@ -38,14 +38,7 @@ app.get('*', createServerRenderer({
   getRoutes,
   scripts: _.map(_.pick(require('../../webpack-assets.json'), ['shared.js', 'app']), entry => entry.js),
   omit: 'admin',
-  always_fetch: require('../../shared/modules/app/containers/App'),
-  config: _.pick(config, config.client_configKeys),
+  alwaysFetch: require('../../shared/modules/app/containers/App'),
+  config: _.pick(config, config.clientConfigKeys),
 }))
 ```
-
-Changes: 
-
-- 0.2.2: added smartSync method for picking mongo/sql based on db connection string
-- 0.2.0: createServerRenderer moved here from fl-react-utils
-- 0.1.1: Added render, an ovveride for backbone-rest's render method. Use in controllers to enable raw templates
-- 0.1.0: Yoinked things from fl-base-webapp

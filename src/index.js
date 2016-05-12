@@ -22,15 +22,15 @@ export function directoryFiles(directory) {
     fs.readdirSync(directory).forEach(file => {
       if (file in EXCLUDED_FILES) return
 
-      const pathed_file = path.join(directory, file)
-      const stat = fs.statSync(pathed_file)
+      const pathedFile = path.join(directory, file)
+      const stat = fs.statSync(pathedFile)
       // a directory, process
       if (stat.isDirectory()) {
-        processDirectory(pathed_file)
+        processDirectory(pathedFile)
       }
       else {
          // a file, add to results
-        results.push(pathed_file)
+        results.push(pathedFile)
       }
     })
   }
@@ -54,13 +54,13 @@ export function directoryModules(directory) {
 
 // Find all modules in a directory that have a class or function as their default export
 export function directoryFunctionModules(directory) {
-  const all_modules = directoryModules(directory)
-  const function_modules = {}
-  _.keys(all_modules).forEach(file => {
-    const module = all_modules[file].default ? all_modules[file].default : all_modules[file]
-    if (_.isFunction(module)) function_modules[file] = module
+  const allModules = directoryModules(directory)
+  const functionModules = {}
+  _.keys(allModules).forEach(file => {
+    const module = allModules[file].default ? allModules[file].default : allModules[file]
+    if (_.isFunction(module)) functionModules[file] = module
   })
-  return function_modules
+  return functionModules
 }
 
 // Implement ajax requests with superagent so that models using backbone-http can get their data when

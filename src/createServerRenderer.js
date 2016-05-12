@@ -19,14 +19,14 @@ const sendError = (res, err) => {
 
 const defaults = {
   entries: ['shared', 'app'],
-  webpack_assetsPath: path.resolve(__dirname, '../../../webpack-assets.json'),
+  webpackAssetsPath: path.resolve(__dirname, '../../../webpack-assets.json'),
 }
 
 export default function createServerRenderer(_options) {
   const options = _.extend({}, defaults, _options)
   const {createStore, getRoutes, config={}} = options
-  let always_fetch = options.always_fetch || []
-  if (!_.isArray(always_fetch)) always_fetch = [always_fetch]
+  let alwaysFetch = options.alwaysFetch || []
+  if (!_.isArray(alwaysFetch)) alwaysFetch = [alwaysFetch]
   if (!createStore) throw new Error('[fl-react-utils] createServerRenderer: Missing createStore from options')
   if (!getRoutes) throw new Error('[fl-react-utils] createServerRenderer: Missing getRoutes from options')
 
@@ -56,16 +56,16 @@ export default function createServerRenderer(_options) {
 
       const store = createStore(reduxReactRouter, getRoutes, createHistory, serverState)
 
-      store.dispatch(match(req.originalUrl, (err, redirect_location, routerState) => {
+      store.dispatch(match(req.originalUrl, (err, redirectLocation, routerState) => {
         if (err) return sendError(res, err)
-        if (redirect_location) return res.redirect(redirect_location.pathname + redirect_location.search)
+        if (redirectLocation) return res.redirect(redirectLocation.pathname + redirectLocation.search)
         if (!routerState) return res.status(404).send('Not found')
 
-        const components = _.uniq((always_fetch || {}).concat(routerState.components))
+        const components = _.uniq((alwaysFetch || {}).concat(routerState.components))
 
-        fetchComponentData({store, components}, (err, fetch_result) => {
+        fetchComponentData({store, components}, (err, fetchResult) => {
           if (err) return sendError(res, err)
-          if (fetch_result.status) res.status(fetch_result.status)
+          if (fetchResult.status) res.status(fetchResult.status)
 
           let initialState = store.getState()
 
@@ -82,11 +82,11 @@ export default function createServerRenderer(_options) {
             </Provider>
           )
 
-          const js = jsAssets(options.entries, options.webpack_assetsPath)
-          const script_tags = js.map(script => `<script type="application/javascript" src="${script}"></script>`).join('\n')
+          const js = jsAssets(options.entries, options.webpackAssetsPath)
+          const scriptTags = js.map(script => `<script type="application/javascript" src="${script}"></script>`).join('\n')
 
-          const css = cssAssets(options.entries, options.webpack_assetsPath)
-          const css_tags = css.map(c => `<link rel="stylesheet" type="text/css" href="${c}">`).join('\n')
+          const css = cssAssets(options.entries, options.webpackAssetsPath)
+          const cssTags = css.map(c => `<link rel="stylesheet" type="text/css" href="${c}">`).join('\n')
 
           const rendered = renderToString(component)
           const head = Helmet.rewind()
@@ -101,14 +101,14 @@ export default function createServerRenderer(_options) {
                 ${head.link}
                 ${head.script}
 
-                ${css_tags}
+                ${cssTags}
                 <script type="application/javascript">
                   window.__INITIAL_STATE__ = ${JSON.stringify(initialState)}
                 </script>
               </head>
               <body id="app">
                 <div id="react-view">${rendered}</div>
-                ${script_tags}
+                ${scriptTags}
               </body>
             </html>
           `
