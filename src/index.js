@@ -3,9 +3,8 @@ import fs from 'fs'
 import path from 'path'
 import request from 'superagent'
 import render from './backbone_rest'
-import createServerRenderer from './createServerRenderer'
 
-export {render, createServerRenderer}
+export {render}
 
 const EXCLUDED_FILES = ['.DS_Store']
 
