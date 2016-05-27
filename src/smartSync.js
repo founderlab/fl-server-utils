@@ -1,9 +1,10 @@
 import _ from 'lodash'
+
 const SQL_PROTOCOLS = ['mysql', 'mysql2', 'postgres', 'pg', 'sqlite', 'sqlite3']
 const HTTP_PROTOCOLS = ['http', 'https']
 
 export default function smartSync(dbUrl, Model) {
-  const protocol = dbUrl.split(':')[0]
+  const protocol = dbUrl && dbUrl.split(':')[0]
   if (protocol === 'mongodb') {
     return require('backbone-mongo').sync(Model)
   }
