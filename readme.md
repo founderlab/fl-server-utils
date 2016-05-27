@@ -1,6 +1,7 @@
 # Helper functions for the server side of FounderLab apps
 
-#####backbone-rest render example:
+backbone-rest render override example:
+-----------------------------
 ```javascript
 ...
 import {render} from 'fl-server-utils'
@@ -28,17 +29,36 @@ export default class ApplicationsController extends RestController {
 }
 ```
 
-#####createServerRenderer:
-Helper method that takes care of a bunch of bs boilerplate for rendering react components server side. 
-Usage: 
+cors
+----
+Middleware to add cors headers to all requests
 
 ```javascript
-app.get('*', createServerRenderer({
-  createStore, 
-  getRoutes,
-  scripts: _.map(_.pick(require('../../webpack-assets.json'), ['shared.js', 'app']), entry => entry.js),
-  omit: 'admin',
-  alwaysFetch: require('../../shared/modules/app/containers/App'),
-  config: _.pick(config, config.clientConfigKeys),
-}))
+// Remember to keep cors before auth middleware
+import {cors} from 'fl-server-utils'
+app.use(cors(config.origins || '*'))
+```
+
+smartSync
+---------
+Auto select the correct type of BackboneORM sync based on the current database url.
+Use this to switch between e.g. mongodb and postgres without any code changes
+
+```javascript
+import Backbone from 'backbone'
+import {smartSync} from 'fl-server-utils'
+
+const dbUrl = process.env.DATABASE_URL
+
+export default class Task extends Backbone.Model {
+  url = `${dbUrl}/tasks`
+
+  schema = {
+
+  }
+}
+
+// Use smartSync and it'll auto require the correct module
+// Would normally look like e.g. `Task.prototype.sync = require('backbone-mongo').sync(Task)`
+Task.prototype.sync = smartSync(dbUrl, Task)
 ```

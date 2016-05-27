@@ -3,16 +3,29 @@ import _ from 'lodash'
 const SQL_PROTOCOLS = ['mysql', 'mysql2', 'postgres', 'pg', 'sqlite', 'sqlite3']
 const HTTP_PROTOCOLS = ['http', 'https']
 
-export default function smartSync(dbUrl, Model) {
-  const protocol = dbUrl && dbUrl.split(':')[0]
+export function selectModule(dbUrl) {
+  if (!dbUrl) {
+    console.error('[fl-server-utils] selectModule: No dbUrl provided, got', dbUrl)
+    return null
+  }
+
+  const protocol = dbUrl.split(':')[0]
   if (protocol === 'mongodb') {
-    return require('backbone-mongo').sync(Model)
+    return 'backbone-mongo'
   }
   else if (_.includes(SQL_PROTOCOLS, protocol)) {
-    return require('fl-backbone-sql').sync(Model)
+    return 'fl-backbone-sql'
   }
   else if (_.includes(HTTP_PROTOCOLS, protocol) || dbUrl.match(/^\//)) {
-    return require('backbone-http').sync(Model)
+    return 'backbone-http'
   }
-  return require('backbone-orm').sync(Model)
+  return 'backbone-orm'
+}
+
+export default function smartSync(dbUrl, Model) {
+  if (!dbUrl) {
+    console.error('[fl-server-utils] smartSync: No dbUrl provided, got', arguments)
+    return null
+  }
+  return require(selectModule(dbUrl)).sync(Model)
 }

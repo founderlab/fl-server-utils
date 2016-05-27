@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import {JSONUtils} from 'backbone-orm'
 
-function stripRev(obj) {
+export function stripRev(obj) {
   if (_.isArray(obj)) return _.map(obj, o => stripRev(o))
   if (_.isObject(obj) && !(obj instanceof Date)) {
     const final_obj = {}
