@@ -1,3 +1,12 @@
+## This package has moved to the [Frameworkstein repository](https://github.com/founderlab/frameworkstein/tree/master/packages/fl-server-utils)
+
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
 # Helper functions for the server side of FounderLab apps
 
 backbone-rest render override example:
